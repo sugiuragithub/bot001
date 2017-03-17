@@ -71,6 +71,8 @@ if (!process.env.token) {
 
 var Botkit = require('./lib/Botkit.js');
 var os = require('os');
+var request = require('request');
+
 var CronJob = require('cron').CronJob;
 var controller = Botkit.slackbot({
     debug: true,
@@ -501,8 +503,36 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
 
     });
 
-controller.hears(['(.*)'], 'direct_message,direct_mention,mention', function(bot, message) {
-    bot.reply(message, "存じ上げません。");
+var context = '';
+var mode = 'dialog';
+var place = '東京';
+
+controller.hears('', 'direct_message,direct_mention,mention', function(bot, message) {
+    var apikey="6d514443327a4c7757744f4a50484e45334f4d55347a59395438774b4f72313259664a553461452e507244";
+    var options = {
+        url: 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY='+apikey,
+        json: {
+            utt: message.text,
+            place: place,
+            sex: '女',
+            bloodtype: 'O',
+            age: '24',
+            t: '20',
+
+            // 以下2行はしりとり以外の会話はコメントアウトいいかも
+            // 会話を継続しているかの情報
+            context: context,
+            mode: mode
+        }
+    }
+
+    //リクエスト送信
+    request.post(options, function (error, response, body) {
+        context = body.context;
+        mode = body.mode;
+
+        bot.reply(message, body.utt);
+    })
 });
 
 function formatUptime(uptime) {
