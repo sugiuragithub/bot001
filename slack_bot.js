@@ -474,25 +474,26 @@ controller.hears(['名前変更'], 'direct_message,direct_mention,mention', func
 */
 controller.hears(['^郵便 (.*)'], 'direct_message,direct_mention,mention', function(bot, message) {
     var postCode = message.match[1];
-    bot.startConversation(message, function (err, convo) {
-        var http = require('http');
-        http.get("http://zipcloud.ibsnet.co.jp/api/search?zipcode=" + postCode, function (result) {
-            var body = '';
-            result.setEncoding('utf8');
-            result.on('data', function(data) {
-                body += data;
-            });
-            result.on('end', function(data) {
-                var v = JSON.parse(body);
-                convo.say(v.results[0].address1
-                         +v.results[0].address2
-                         +v.results[0].address3
-                );
-                convo.next();
+    if(isPostcode(postCode)) {
+        bot.startConversation(message, function (err, convo) {
+            var http = require('http');
+            http.get("http://zipcloud.ibsnet.co.jp/api/search?zipcode=" + postCode, function (result) {
+                var body = '';
+                result.setEncoding('utf8');
+                result.on('data', function(data) {
+                    body += data;
+                });
+                result.on('end', function(data) {
+                    var v = JSON.parse(body);
+                    convo.say(v.results[0].address1
+                             +v.results[0].address2
+                             +v.results[0].address3
+                    );
+                    convo.next();
+                });
             });
         });
-    });
-
+    }
 });
 
 controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function(bot, message) {
