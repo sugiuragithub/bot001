@@ -68,6 +68,11 @@ if (!process.env.token) {
     console.log('Error: Specify token in environment');
     process.exit(1);
 }
+if (!process.env.zatudan_apikey) {
+    console.log('Error: Specify zatudan_apikey in environment');
+    process.exit(1);
+}
+
 
 var Botkit = require('./lib/Botkit.js');
 var os = require('os');
@@ -508,7 +513,47 @@ var mode = 'dialog';
 var place = '東京';
 
 controller.hears('', 'direct_message,direct_mention,mention', function(bot, message) {
-    var apikey="apikey";		// ここ変更
+    var apikey=process.env.zatudan_apikey;
+/*
+*
+*
+■リクエストボディ(JSON形式)
+キー		必須	説明
+utt		○	ユーザの発話を指定(255文字以下)
+			サンプル値) こんにちは
+context	-		コンテキストIDを指定(255文字以下)
+			サンプル値) aaabbbccc111222333
+			※会話(しりとり)を継続する場合は、レスポンスボディのcontextの値を指定する
+nickname	-	ユーザのニックネームを指定(全角10文字(半角10文字)以下)
+			サンプル値) 光
+nickname_y	-	ユーザのニックネームの読みを指定(全角20文字以下(カタカナのみ))
+			サンプル値) ヒカリ
+sex		-	ユーザの性別は、下記のいずれかを指定
+			男、女
+bloodtype	-	ユーザの血液型は、下記のいずれかを指定
+			A、B、AB、O
+birthdateY	-	ユーザの誕生日(年)を指定(1～現在までのいずれかの整数(半角4文字以下))
+			サンプル値) 1997
+birthdateM	-	ユーザの誕生日(月)を指定(1～12までのいずれかの整数)
+			サンプル値) 5
+birthdateD	-	ユーザの誕生日(日)を指定(1～31までのいずれかの整数)
+			サンプル値) 30
+age		-	ユーザの年齢を指定(正の整数(半角3文字以下))
+			サンプル値) 16
+constellations	-	ユーザの星座は、下記のいずれかを指定
+			牡羊座、牡牛座、双子座、蟹座、獅子座、乙女座、天秤座、蠍座、射手座、山羊座、水瓶座、魚座
+place		-	ユーザの地域情報は、「場所リスト」に含まれるもののいずれかを指定
+			サンプル値) 東京
+mode		-	対話のモードは、下記のいずれかを指定
+			dialog (省略時)
+			srtr
+			※会話(しりとり)を継続する場合は、レスポンスボディのmodeの値を指定する
+t		-	キャラクタは、下記のいずれかを指定
+			20 : 関西弁キャラ
+			30 : 赤ちゃんキャラ
+			指定なし : デフォルトキャラ
+*
+*/
     var options = {
         url: 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY='+apikey,
         json: {
