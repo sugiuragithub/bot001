@@ -508,7 +508,7 @@ var mode = 'dialog';
 var place = '東京';
 
 controller.hears('', 'direct_message,direct_mention,mention', function(bot, message) {
-    var apikey="6d514443327a4c7757744f4a50484e45334f4d55347a59395438774b4f72313259664a553461452e507244";
+    var apikey="apikey";		// ここ変更
     var options = {
         url: 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY='+apikey,
         json: {
