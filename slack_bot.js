@@ -472,7 +472,7 @@ controller.hears(['名前変更'], 'direct_message,direct_mention,mention', func
 * 郵便検索API
 * http://zipcloud.ibsnet.co.jp/doc/api
 */
-controller.hears(['^郵便　(.*)$','^yubin (.*)$','^yuubin (.*)$',,'^ゆうびん　(.*)$'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['^郵便　(.*)$','^郵便 (.*)$','^yubin (.*)$','^yuubin (.*)$',,'^ゆうびん　(.*)$'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
     var postCode = message.match[1];
     if(isPostcode(postCode)) {
         bot.startConversation(message, function (err, convo) {
