@@ -468,6 +468,33 @@ controller.hears(['名前変更'], 'direct_message,direct_mention,mention', func
     });
 });
 
+/**
+* 郵便検索API
+* http://zipcloud.ibsnet.co.jp/doc/api
+*/
+controller.hears(['^郵便 (.*)'], 'direct_message,direct_mention,mention', function(bot, message) {
+    var postCode = message.match[1];
+    bot.startConversation(message, function (err, convo) {
+        var http = require('http');
+        http.get("http://zipcloud.ibsnet.co.jp/api/search?zipcode=" + postCode, function (result) {
+            var body = '';
+            result.setEncoding('utf8');
+            result.on('data', function(data) {
+                body += data;
+            });
+            result.on('end', function(data) {
+                var v = JSON.parse(body);
+                convo.say(v.results[0].address1
+                         +v.results[0].address2
+                         +v.results[0].address3
+                );
+                convo.next();
+            });
+        });
+    });
+
+});
+
 controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function(bot, message) {
 
     bot.startConversation(message, function(err, convo) {
@@ -576,7 +603,7 @@ t		-	キャラクタは、下記のいずれかを指定
         context = body.context;
         mode = body.mode;
 
-        bot.reply(message, body.utt);
+        bot.reply(message, body.utt + getRandomSmileEmoji());
     })
 });
 
@@ -596,4 +623,34 @@ function formatUptime(uptime) {
 
     uptime = uptime + ' ' + unit;
     return uptime;
+}
+function getRandomSmileEmoji(){
+    var emojiArray = [
+        '',
+        ':grinning:',
+        '',
+        ':grimacing:',
+        '',
+        ':grin:',
+        '',
+        ':smiley:',
+        '',
+        ':smile:',
+        '',
+        ':laughing:',
+        '',
+        ':innocent:',
+        '',
+        '',
+        ':wink:'
+    ];
+    var random = Math.floor(Math.random() * emojiArray.length);
+    return emojiArray[random];
+}
+
+function isPostcode( postcode )
+{
+  if( (postcode.match(/^\d{3}-?\d{4}$/)) ){
+    return true;
+  }else{ return false; }
 }
